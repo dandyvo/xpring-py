@@ -1,8 +1,17 @@
 import typing as t
 
 from xpring.key_pair import KeyPair
+from xpring.serialization import serialize_transaction
 from xpring.types import (
-    AccountId, Address, EncodedSeed, Seed, PrivateKey, PublicKey, Signature
+    AccountId,
+    Address,
+    EncodedSeed,
+    Seed,
+    PrivateKey,
+    PublicKey,
+    Signature,
+    SignedTransaction,
+    Transaction,
 )
 
 
@@ -32,8 +41,13 @@ class Wallet:
     def private_key(self) -> PrivateKey:
         return self.key_pair.private_key
 
-    def sign(self, message: bytes) -> bytes:
+    def sign(self, message: bytes) -> Signature:
         return self.key_pair.sign(message)
 
     def verify(self, message: bytes, signature: bytes) -> bool:
         return self.key_pair.verify(message, t.cast(Signature, signature))
+
+    def sign_transaction(self, transaction: Transaction) -> SignedTransaction:
+        blob = serialize_transaction(transaction, signing=True)
+        signature = self.sign(blob)
+        return SignedTransaction(transaction, self.public_key, signature)

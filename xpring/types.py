@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 import typing as t
 
 import typing_extensions as tex
@@ -35,3 +37,12 @@ NonXrpAmount = tex.TypedDict(
 XrpAmount = str
 
 Amount = t.Union[XrpAmount, NonXrpAmount]
+
+Transaction = t.Mapping
+
+
+@dataclass
+class SignedTransaction:
+    transaction: Transaction
+    public_key: PublicKey
+    signature: Signature
